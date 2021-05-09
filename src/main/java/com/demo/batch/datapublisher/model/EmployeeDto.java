@@ -14,8 +14,4 @@ public class EmployeeDto {
     private String lastName;
     private String city;
 
-    public EmployeeDto(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
 }
