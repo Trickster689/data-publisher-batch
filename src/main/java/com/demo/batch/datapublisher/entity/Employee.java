@@ -7,13 +7,17 @@ import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
+@Table(schema = "testdb")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Employee {
+public class Employee implements Serializable {
+
     @Id
     private Long id;
     private String firstName;

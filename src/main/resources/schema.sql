@@ -1,4 +1,4 @@
-DROP TABLE employee;
+DROP TABLE IF EXISTS employee;
 CREATE TABLE employee (
 	id bigint NOT NULL,
 	first_name varchar NULL,

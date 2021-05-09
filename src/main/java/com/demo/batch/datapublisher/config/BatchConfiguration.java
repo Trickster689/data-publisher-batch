@@ -1,6 +1,7 @@
 package com.demo.batch.datapublisher.config;
 
 import com.demo.batch.datapublisher.entity.Employee;
+import com.demo.batch.datapublisher.mapper.EmployeeDtoMapper;
 import com.demo.batch.datapublisher.model.EmployeeDto;
 import com.demo.batch.datapublisher.processor.EmployeeProcessor;
 import org.springframework.batch.core.Job;
@@ -9,8 +10,8 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.item.database.JpaPagingItemReader;
-import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
@@ -40,7 +41,7 @@ public class BatchConfiguration {
 
     private final Resource outputResource = new FileSystemResource("output/processed_data.csv");
 
-    @Bean
+    /*@Bean
     public JpaPagingItemReader<Employee> reader() {
         return new JpaPagingItemReaderBuilder<Employee>()
                 .name("employeeItemReader")
@@ -49,6 +50,17 @@ public class BatchConfiguration {
                 .transacted(true)
                 .pageSize(10)
                 .build();
+    }*/
+
+
+    @Bean
+    public ItemReader<EmployeeDto> reader(){
+        JdbcCursorItemReader<EmployeeDto> reader = new JdbcCursorItemReader<>();
+        reader.setDataSource(dataSource);
+        reader.setSql("SELECT first_name, last_name, city FROM employee");
+        reader.setRowMapper(new EmployeeDtoMapper());
+
+        return reader;
     }
 
     @Bean
@@ -92,7 +104,7 @@ public class BatchConfiguration {
     @Bean
     public Step step1(FlatFileItemWriter<EmployeeDto> writer) {
         return stepBuilderFactory.get("step1")
-                                 .<Employee, EmployeeDto> chunk(10)
+                                 .<EmployeeDto, EmployeeDto> chunk(10)
                                  .reader(reader())
                                  .processor(processor())
                                  .writer(writer)
