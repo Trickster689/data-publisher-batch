@@ -45,7 +45,7 @@ public class BatchConfiguration {
         return new JpaPagingItemReaderBuilder<Employee>()
                 .name("employeeItemReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("select e.firstName, e.lastName, e.city from Employee e")
+                .queryString("from Employee e")
                 .transacted(true)
                 .pageSize(10)
                 .build();
